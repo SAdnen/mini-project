@@ -4,22 +4,23 @@ import numpy as np
 
 class Agent(object):
 
-    def __init__(self, actions):
-        self.actions = actions
-        self.num_actions = len(actions)
+    def __init__(self, env, action_space, gamma=1.0, alpha=0.5, epsilon=0.1):
+        self.action_space = action_space
+        #  self.num_actions = len(actions) : to be removed
 
-    def act(self, state):
-        raise NotImplementedError
-
-
-class SarsaAgent(Agent):
-
-    def __init__(self, actions, gamma=1.0, alpha=0.5, epsilon=0.1):
-        super(SarsaAgent, self).__init__(actions)
         self.Q = defaultdict(float)
         self.gamma = gamma
         self.alpha = alpha
         self.epsilon = epsilon
+
+    def act(self, state):
+        return self.action_space.sample()
+
+
+class SarsaAgent(Agent):
+
+    def __init__(self, action_space):
+        super(SarsaAgent, self).__init__(action_space)
 
     def act(self, state):
         s1 = str(state)

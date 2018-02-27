@@ -45,23 +45,22 @@ class Experiment(object):
                 self.agent.learn(
                     state, action, reward, next_state, next_action)
 
-                # state <- next state
-                state = next_state
-
                 # state <- next state, action <- next_action
                 state = next_state
                 action = next_action
 
-                R += reward  # accumulate reward - for display
+                # accumulate reward - for display
+                R += reward
 
                 # if interactive display, show update for each step
                 if interactive:
                     self.env.render()
 
-            self.episode_length = np.append(
-                self.episode_length, t)  # keep episode length - for display
-            self.episode_reward = np.append(
-                self.episode_reward, R)  # keep episode reward - for display
+            # keep episode length - for display
+            self.episode_length = np.append(self.episode_length, t)
+
+            # keep episode reward - for display
+            self.episode_reward = np.append(self.episode_reward, R)
 
             # if interactive display, show update for the episode
             if interactive:
@@ -102,7 +101,7 @@ class Experiment(object):
 
             done = False  # used to indicate terminal state
             R = 0  # used to display accumulated rewards for an episode
-            t = 0  # used to display accumulated steps for an episode i.e episode length
+            t = 0  # used to display accumulated steps for an episode
 
             # repeat for each step of episode, until state is terminal
             while not done:
