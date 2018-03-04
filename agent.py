@@ -4,7 +4,7 @@ import numpy as np
 
 class Agent(object):
 
-    def __init__(self, env, action_space, gamma=1.0, alpha=0.5, epsilon=0.1):
+    def __init__(self, action_space, gamma=1.0, alpha=0.5, epsilon=0.1):
         self.action_space = action_space
         #  self.num_actions = len(actions) : to be removed
 
@@ -13,8 +13,12 @@ class Agent(object):
         self.alpha = alpha
         self.epsilon = epsilon
 
-    def act(self, state):
-        return self.action_space.sample()
+    def act(self, state, parameters):
+        action = np.dot(parameters, state)
+        if action > 0:
+            return 1
+        else:
+            return 0
 
 
 class SarsaAgent(Agent):
