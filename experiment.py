@@ -1,3 +1,4 @@
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -32,7 +33,6 @@ class Experiment(object):
 
         self.env = env
         self.agent = agent
-
         self.episode_length = np.array([0])
         self.episode_reward = np.array([0])
 
@@ -143,17 +143,27 @@ class Experiment(object):
         if not interactive:
             plot_graphs(self.episode_reward, self.episode_length)
 
-    def run_random(self, max_number_of_episodes=100,
-                   interactive=False, display_frequency=1, reward_tresh=50):
+    def run_randomsearch(self, max_number_of_episodes=100, interactive=False,
+                         display_frequency=1, reward_tresh=10, params=None):
         # repeat for each episode
-        best_parameters = np.zeros(4)
+        best_parameters = []
+        list_rewards = []
         max_reward = reward_tresh
         for episode in range(max_number_of_episodes):
             state = self.env.reset()  # Initialization
             done = False  # used to indicate terminal state
             R = 0  # used to display accumulated rewards for an episode
             t = 0  # used to display accumulated steps for an episode
-            parameters = np.random.rand(4) * 2 - 1
+
+            # At first, the agent has no history of parameters
+            if params is None:
+                random_number = np.random.rand() / 2 - 0.25
+                coeffecients = np.array([1, -0.16, 0.47, -0.25])
+                intercepts = np.array([0, 0.16, 0.64, 0.62])
+                parameters = random_number * coeffecients + intercepts
+            # Try the best parameters for 10 episodes
+            else:
+                parameters = params
             # repeat for each step of episode, until state is terminal
             while not done:
 
@@ -170,10 +180,11 @@ class Experiment(object):
                 # if interactive display, show update for each step
                 if interactive:
                     self.env.render()
-            if R > max_reward:
+            if R >= reward_tresh:
                 max_reward = R
-                best_parameters = parameters
-                print("Reward: ", R, "\n parameters:", parameters)
+                best_parameters.append(parameters)
+                print("Parameters: ", parameters, "\nReward: ", max_reward)
+                list_rewards.append(R)
 
             self.episode_length = np.append(
                 self.episode_length, t)  # keep episode length - for display
@@ -187,3 +198,4 @@ class Experiment(object):
         # if not interactive display, show graph at the end
         if not interactive:
             plot_graphs(self.episode_reward, self.episode_length)
+        return best_parameters, list_rewards

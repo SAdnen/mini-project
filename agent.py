@@ -1,3 +1,4 @@
+
 from collections import defaultdict
 import numpy as np
 
@@ -7,7 +8,7 @@ class Agent(object):
     def __init__(self, action_space, gamma=1.0, alpha=0.5, epsilon=0.1):
         self.action_space = action_space
         #  self.num_actions = len(actions) : to be removed
-
+        self.V = defaultdict(float)
         self.Q = defaultdict(float)
         self.gamma = gamma
         self.alpha = alpha

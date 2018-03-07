@@ -1,0 +1,11 @@
+#! /usr/bin/env python3
+
+import numpy as np
+import gym
+
+ENV = "CartPole-v0"
+EPISODES = 100
+
+
+env = gym.make(ENV)
+for episode in range(EPISODES):
