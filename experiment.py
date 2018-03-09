@@ -36,6 +36,9 @@ class Experiment(object):
         self.episode_length = np.array([0])
         self.episode_reward = np.array([0])
 
+    def fake_label(action):
+        return 1
+
     def run_sarsa(self, max_number_of_episodes=100,
                   interactive=False, display_frequency=1):
 
@@ -141,6 +144,7 @@ class Experiment(object):
                 self.env.close()
         # if not interactive display, show graph at the end
         if not interactive:
+
             plot_graphs(self.episode_reward, self.episode_length)
 
     def run_randomsearch(self, max_number_of_episodes=100, interactive=False,
@@ -164,10 +168,12 @@ class Experiment(object):
             # Try the best parameters for 10 episodes
             else:
                 parameters = params
+                
             # repeat for each step of episode, until state is terminal
             while not done:
 
                 t += 1  # increase step counter - for display
+
 
                 # choose action from state using policy derived from Q
                 action = self.agent.act(state, parameters)
@@ -191,6 +197,7 @@ class Experiment(object):
             self.episode_reward = np.append(
                 self.episode_reward, R)  # keep episode reward - for display
 
+
             # if interactive display, show update for the episode
         if interactive:
             self.env.render()
@@ -199,3 +206,4 @@ class Experiment(object):
         if not interactive:
             plot_graphs(self.episode_reward, self.episode_length)
         return best_parameters, list_rewards
+
