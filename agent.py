@@ -1,3 +1,4 @@
+
 from collections import defaultdict
 import numpy as np
 import tensorflow as tf
@@ -5,22 +6,29 @@ import tensorflow as tf
 
 class Agent(object):
 
-    def __init__(self, actions):
-        self.actions = actions
-        self.num_actions = len(actions)
-
-    def act(self, state):
-        raise NotImplementedError
-
-
-class SarsaAgent(Agent):
-
-    def __init__(self, actions, gamma=1.0, alpha=0.5, epsilon=0.1):
-        super(SarsaAgent, self).__init__(actions)
+    def __init__(self, action_space, gamma=1.0, alpha=0.5, epsilon=0.1):
+        self.action_space = action_space
+        #  self.num_actions = len(actions) : to be removed
+        self.V = defaultdict(float)
         self.Q = defaultdict(float)
         self.gamma = gamma
         self.alpha = alpha
         self.epsilon = epsilon
+
+    def act(self, state, **parameters):
+
+        return np.random.choice(self.action_space)
+        action = np.dot(parameters, state)
+        if action > 0:
+            return 1
+        else:
+            return 0
+
+
+class SarsaAgent(Agent):
+
+    def __init__(self, action_space):
+        super(SarsaAgent, self).__init__(action_space)
 
     def act(self, state):
         s1 = str(state)
