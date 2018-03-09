@@ -14,7 +14,9 @@ class Agent(object):
         self.alpha = alpha
         self.epsilon = epsilon
 
-    def act(self, state, parameters):
+    def act(self, state, **parameters):
+
+        return np.random.choice(self.action_space)
         action = np.dot(parameters, state)
         if action > 0:
             return 1
