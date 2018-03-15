@@ -1,14 +1,14 @@
 
-from collections import defaultdict
 import numpy as np
 import tensorflow as tf
+from collections import defaultdict
 
 
-class Agent(object):
+class CartPole(object):
 
     def __init__(self, action_space, gamma=1.0, alpha=0.5, epsilon=0.1):
         self.action_space = action_space
-        #  self.num_actions = len(actions) : to be removed
+        #  self.num_actions = len(action_space) : to be removed
         self.V = defaultdict(float)
         self.Q = defaultdict(float)
         self.gamma = gamma
@@ -25,7 +25,7 @@ class Agent(object):
             return 0
 
 
-class SarsaAgent(Agent):
+class SarsaAgent(CartPole):
 
     def __init__(self, action_space):
         super(SarsaAgent, self).__init__(action_space)
@@ -34,13 +34,13 @@ class SarsaAgent(Agent):
         s1 = str(state)
         vals = [v for ((s, a), v) in self.Q.items() if s == s1]
         if np.random.random() < self.epsilon:
-            i = np.random.randint(0, len(self.actions))
+            i = np.random.randint(0, len(self.action_space))
         else:
             if len(vals) <= 0:
-                i = np.random.randint(0, len(self.actions))
+                i = np.random.randint(0, len(self.action_space))
             else:
                 i = np.argmax(vals)
-        return self.actions[i]
+        return self.action_space[i]
 
     def learn(self, state1, action1, reward, state2, action2):
         s1, a1 = str(state1), str(action1)
@@ -48,13 +48,13 @@ class SarsaAgent(Agent):
         self.Q[(s2, a2)] += 0
         self.Q[(s1, a1)] += 0
         self.Q[(s1, a1)] += self.alpha * \
-                            (reward + self.gamma * self.Q[(s2, a2)] - self.Q[(s1, a1)])
+            (reward + self.gamma * self.Q[(s2, a2)] - self.Q[(s1, a1)])
 
 
-class QlearningAgent(Agent):
+class QlearningAgent(CartPole):
 
-    def __init__(self, actions, gamma=1.0, alpha=0.5, epsilon=0.1):
-        super(QlearningAgent, self).__init__(actions)
+    def __init__(self, action_space, gamma=1.0, alpha=0.5, epsilon=0.1):
+        super(QlearningAgent, self).__init__(action_space)
         self.Q = defaultdict(float)
         self.gamma = gamma
         self.alpha = alpha
@@ -64,18 +64,18 @@ class QlearningAgent(Agent):
         s1 = str(state)
         vals = [v for ((s, a), v) in self.Q.items() if s == s1]
         if np.random.random() < self.epsilon:
-            i = np.random.randint(0, len(self.actions))
+            i = np.random.randint(0, len(self.action_space))
         else:
             if len(vals) <= 0:
-                i = np.random.randint(0, len(self.actions))
+                i = np.random.randint(0, len(self.action_space))
             else:
                 i = np.argmax(vals)
-        return self.actions[i]
+        return self.action_space[i]
 
     def learn(self, state1, action1, reward, state2, done):
         s1, a1, s2 = str(state1), str(action1), str(state2)
         self.Q[(s1, a1)] += 0
-        for action in self.actions:
+        for action in self.action_space:
             a2 = str(action)
             self.Q[(s2, a2)] += 0
 
@@ -87,10 +87,10 @@ class QlearningAgent(Agent):
         self.Q[(s1, a1)] += self.alpha * td_delta
 
 
-class PolicyGradientAgent(Agent):
+class PolicyGradientAgent(CartPole):
 
-    def __init__(self, actions, obs_size, gamma=1.0, alpha=0.5, epsilon=0.1, hidden_size=128, update_frequency=10):
-        super(PolicyGradientAgent, self).__init__(actions)
+    def __init__(self, action_space, obs_size, gamma=1.0, alpha=0.5, epsilon=0.1, hidden_size=128, update_frequency=10):
+        super(PolicyGradientAgent, self).__init__(action_space)
         self.Q = defaultdict(float)
         self.gamma = gamma
         self.alpha = alpha
@@ -112,11 +112,15 @@ class PolicyGradientAgent(Agent):
         self.label = tf.placeholder(tf.float32, [None, 1])
         self.return_weight = tf.placeholder(tf.float32, [None, 1])
 
-        self.layer_1 = tf.nn.relu(tf.add(tf.matmul(self.observation, self.weights['h1']), self.biases['b1']))
-        self.layer_2 = tf.add(tf.matmul(self.layer_1, self.weights['h2']), self.biases['b2'])
+        self.layer_1 = tf.nn.relu(
+            tf.add(tf.matmul(self.observation, self.weights['h1']), self.biases['b1']))
+        self.layer_2 = tf.add(
+            tf.matmul(self.layer_1, self.weights['h2']), self.biases['b2'])
         self.output = tf.nn.softmax(self.layer_2)
 
-        self.loss = -tf.reduce_mean(tf.log(tf.square(self.label - self.output) + 1e-04) * self.return_weight, axis=0)
+        self.loss = - \
+            tf.reduce_mean(
+                tf.log(tf.square(self.label - self.output) + 1e-04) * self.return_weight, axis=0)
         self.optimizer = tf.train.AdamOptimizer().minimize(self.loss)
 
         self.sess = tf.Session()
@@ -140,11 +144,12 @@ class PolicyGradientAgent(Agent):
 
     def act(self, state):
         state_reshaped = np.reshape(np.array(state), (1, self.obs_size))
-        y = self.sess.run(self.output, feed_dict={self.observation: state_reshaped})
+        y = self.sess.run(
+            self.output, feed_dict={self.observation: state_reshaped})
         prob = y[0][0]
-        action =  1 if np.random.uniform() < prob else 0
+        action = 1 if np.random.uniform() < prob else 0
         print(action, y[0])
-        return action# self.actions[0] # np.random.choice(self.actions, p=y[0])#
+        return action  # self.action_space[0] # np.random.choice(self.action_space, p=y[0])#
 
     def learn(self, epx, epl, epr, episode_number):
         # Compute the discounted reward backwards through time.
@@ -152,12 +157,13 @@ class PolicyGradientAgent(Agent):
         # print(epx, epx.shape, type(epx))
 
         if episode_number % self.update_frequency == 0:
-            arguments = {self.observation: epx, self.label: epl, self.return_weight: discounted_epr}
+            arguments = {self.observation: epx, self.label:
+                         epl, self.return_weight: discounted_epr}
             a = self.optimizer.run(feed_dict=arguments, session=self.sess)
             # print(a)
-        # state, outputs_map = loss.forward(arguments, outputs=loss.outputs, keep_for_backward=loss.outputs)
+        # state, outputs_map = loss.forward(arguments, outputs=loss.outputs,
+        # keep_for_backward=loss.outputs)
 
     def close(self):
 
         self.sess.close()
-
