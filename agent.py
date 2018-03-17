@@ -1,4 +1,3 @@
-
 import numpy as np
 import tensorflow as tf
 from collections import defaultdict
@@ -6,26 +5,33 @@ from collections import defaultdict
 
 class CartPole(object):
 
-    def __init__(self, action_space, gamma=1.0, alpha=0.5, epsilon=0.1):
+    """
+    This Class defines the defaul behavior of CartPole agent
+    """
+
+    def __init__(self, action_space):
         self.action_space = action_space
-        #  self.num_actions = len(action_space) : to be removed
-        self.V = defaultdict(float)
-        self.Q = defaultdict(float)
-        self.gamma = gamma
-        self.alpha = alpha
-        self.epsilon = epsilon
 
-    def act(self, state, **parameters):
-
-        return np.random.choice(self.action_space)
-        action = np.dot(parameters, state)
-        if action > 0:
-            return 1
-        else:
-            return 0
+    def act(self):
+        """ Returns random action from action space"""
+        return self.action_space.sample()
 
 
 class SarsaAgent(CartPole):
+
+    """
+    This class provides an implementation of SARASA agent for cartpole env.
+
+    Attributes:
+        act: Take state as argument and returns and action from Q table.
+        learn: Update the Q table.
+        Args:
+            state1: state of the agent at the time step T-1.
+            action1: action taken with respect to sate1.
+            reward: reward assigned to action1.
+            state2: new state of the agent, at the time T, after action1.
+            action2: action taken with respect to state2.
+    """
 
     def __init__(self, action_space):
         super(SarsaAgent, self).__init__(action_space)
@@ -52,6 +58,28 @@ class SarsaAgent(CartPole):
 
 
 class QlearningAgent(CartPole):
+
+    """
+    This class provides and implementation of Q-learning algorithm.
+
+    Attributes:
+        init: constuctor of the QlearningAgent class.
+        Args:
+            action_space: the action space of the agent.
+            gamma: parameter that defines .......
+            alpha: parameter that defines ......
+            epsilon: parameter that defines .....
+
+        act: take state as argument and returns action with respect to state.
+        learn: update the Q-table.
+        Args:
+            state1: state of the agent at T-1.
+            action1: action taken with respect to state1.
+            reward: reward assigned to agent after commiting action1.
+            state2: new state of the agent at T after taking action1.
+            done: indicate whether the episode is finished or not.
+
+    """
 
     def __init__(self, action_space, gamma=1.0, alpha=0.5, epsilon=0.1):
         super(QlearningAgent, self).__init__(action_space)
