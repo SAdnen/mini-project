@@ -29,7 +29,7 @@ class RandomSearch(CartPole):
             self.parameters = parameters
 
         def act(self, state):
-            return parameters * state
+            return self.parameters * state
 
         def learn(self, reward, done):
             if reward > self.reward_tresh:
