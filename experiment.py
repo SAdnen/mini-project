@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -9,7 +8,7 @@ def plot_graphs(episode_reward, episode_length):
     x_axis = range(len(episode_lengths))
 
     plt.figure(1)
-    plt.subplot(211)
+    # plt.subplot(211)
     plt.plot(x_axis, episode_lengths)
     plt.title('Episode Lenghts')
     plt.grid(True)
@@ -17,8 +16,8 @@ def plot_graphs(episode_reward, episode_length):
     plt.ylabel("Lenght")
 
     plt.figure(2)
-    plt.subplot(212)
-    plt.plot(x_axis, episode_rewards / np.max(np.abs(episode_rewards)))
+    # plt.subplot(212)
+    plt.plot(x_axis, episode_rewards )
     plt.title('Rewards')
     plt.grid(True)
     plt.xlabel("Episode")
@@ -36,10 +35,8 @@ class Experiment(object):
         self.episode_length = np.array([0])
         self.episode_reward = np.array([0])
 
-    def fake_label(action):
-        return 1
 
-    def run_sarsa(self, max_number_of_episodes=100,
+    def run(self, max_number_of_episodes=100,
                   interactive=False, display_frequency=1):
 
         # repeat for each episode
@@ -64,17 +61,9 @@ class Experiment(object):
                 # take action, observe reward and next state
                 next_state, reward, done, _ = self.env.step(action)
 
-                # choose next action from next state using policy derived from
-                # Q
-                next_action = self.agent.act(next_state)
-
-                # agent learn (SARSA update)
-                self.agent.learn(
-                    state, action, reward, next_state, next_action)
-
                 # state <- next state, action <- next_action
                 state = next_state
-                action = next_action
+                # action = next_action
 
                 # accumulate reward - for display
                 R += reward
@@ -89,121 +78,11 @@ class Experiment(object):
             # keep episode reward - for display
             self.episode_reward = np.append(self.episode_reward, R)
 
-            # if interactive display, show update for the episode
-            if interactive:
-                self.env.render()
-                self.env.close()
-        # if not interactive display, show graph at the end
-        if not interactive:
-            plot_graphs(self.episode_reward, self.episode_length)
+            # agent learn
+            self.agent.learn()
 
-    def run_qlearning(self, max_number_of_episodes=100,
-                      interactive=False, display_frequency=1):
-
-        # repeat for each episode
-        for episode_number in range(max_number_of_episodes):
-
-            # initialize state
-            state = self.env.reset()
-
-            done = False  # used to indicate terminal state
-            R = 0  # used to display accumulated rewards for an episode
-            t = 0  # used to display accumulated steps for an episode
-
-            # repeat for each step of episode, until state is terminal
-            while not done:
-
-                t += 1  # increase step counter - for display
-
-                # choose action from state using policy derived from Q
-                action = self.agent.act(state)
-
-                # take action, observe reward and next state
-                next_state, reward, done, _ = self.env.step(action)
-
-                # agent learn (Q-Learning update)
-                self.agent.learn(state, action, reward, next_state, done)
-
-                # state <- next state
-                state = next_state
-
-                R += reward  # accumulate reward - for display
-
-                # if interactive display, show update for each step
-                if interactive:
-                    self.env.render()
-
-            self.episode_length = np.append(
-                self.episode_length, t)  # keep episode length - for display
-            self.episode_reward = np.append(
-                self.episode_reward, R)  # keep episode reward - for display
-
-            # if interactive display, show update for the episode
-            if interactive:
-                self.env.render()
-                self.env.close()
-        # if not interactive display, show graph at the end
-        if not interactive:
-
-            plot_graphs(self.episode_reward, self.episode_length)
-
-    def run_randomsearch(self, max_number_of_episodes=100, interactive=False,
-                         display_frequency=1, reward_tresh=10, params=None):
-        # repeat for each episode
-        best_parameters = []
-        list_rewards = []
-        max_reward = reward_tresh
-        for episode in range(max_number_of_episodes):
-            state = self.env.reset()  # Initialization
-            done = False  # used to indicate terminal state
-            R = 0  # used to display accumulated rewards for an episode
-            t = 0  # used to display accumulated steps for an episode
-
-            # At first, the agent has no history of parameters
-            if params is None:
-                random_number = np.random.rand() / 2 - 0.25
-                coeffecients = np.array([1, -0.16, 0.47, -0.25])
-                intercepts = np.array([0, 0.16, 0.64, 0.62])
-                parameters = random_number * coeffecients + intercepts
-            # Try the best parameters for 10 episodes
-            else:
-                parameters = params
-                
-            # repeat for each step of episode, until state is terminal
-            while not done:
-
-                t += 1  # increase step counter - for display
-
-
-                # choose action from state using policy derived from Q
-                action = self.agent.act(state, parameters)
-
-                # take action, observe reward and next state
-                state, reward, done, _ = self.env.step(action)
-
-                R += reward  # accumulate reward - for display
-
-                # if interactive display, show update for each step
-                if interactive:
-                    self.env.render()
-            if R >= reward_tresh:
-                max_reward = R
-                best_parameters.append(parameters)
-                print("Parameters: ", parameters, "\nReward: ", max_reward)
-                list_rewards.append(R)
-
-            self.episode_length = np.append(
-                self.episode_length, t)  # keep episode length - for display
-            self.episode_reward = np.append(
-                self.episode_reward, R)  # keep episode reward - for display
-
-
-            # if interactive display, show update for the episode
+        # if interactive display, show update for the episode
         if interactive:
-            self.env.render()
             self.env.close()
-        # if not interactive display, show graph at the end
-        if not interactive:
-            plot_graphs(self.episode_reward, self.episode_length)
-        return best_parameters, list_rewards
 
+        plot_graphs(self.episode_reward, self.episode_length)
