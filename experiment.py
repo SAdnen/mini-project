@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
+from time import sleep
 
 def plot_graphs(episode_reward, episode_length):
     episode_lengths = episode_length
@@ -80,6 +80,73 @@ class Experiment(object):
 
             # agent learn
             self.agent.learn()
+
+        # if interactive display, show update for the episode
+        if interactive:
+            self.env.close()
+
+        plot_graphs(self.episode_reward, self.episode_length)
+
+
+    def run_qlearning(self, max_number_of_episodes=100,
+                  interactive=False, display_frequency=1, debug=True):
+
+        # repeat for each episode
+        for episode_number in range(max_number_of_episodes):
+
+            # initialize state
+            state = self.env.reset()
+
+            done = False  # used to indicate terminal state
+            R = 0  # used to display accumulated rewards for an episode
+            t = 0  # used to display accumulated steps for an episode i.e episode length
+
+            # repeat for each step of episode, until state is terminal
+            # repeat for each step of episode, until state is terminal
+            while not done:
+                # increase step counter - for display
+                t += 1
+
+                # choose action from state
+                action = self.agent.act(state)
+
+                # take action, observe reward and next state
+                next_state, reward, done, _ = self.env.step(action)
+
+                # agent learn
+                self.agent.learn(state, action, reward, next_state)
+
+
+                # update state & action
+                state = next_state
+
+                R += reward  # accumulate reward - for display
+
+                # if interactive display, show update for each step
+                if interactive:
+                    self.env.render()
+                    # sleep(0.1)
+                if debug:
+                    print("\nEpisode = %d" % episode_number)
+                    print("t = %d" % t)
+                    print("Action: %d" % action)
+                    print("State: %s" % str(state))
+                    print("Reward: %f" % reward)
+
+
+
+            # keep episode length - for display
+            self.episode_length = np.append(self.episode_length, t)
+
+            # keep episode reward - for display
+            self.episode_reward = np.append(self.episode_reward, R)
+
+            # update exploration rate
+            self.agent.epsilon = self.agent.get_explore_rate(episode_number)
+
+            # update learning rate
+            self.agent.alpha = self.agent.get_learning_rate(episode_number)
+
 
         # if interactive display, show update for the episode
         if interactive:
