@@ -38,6 +38,6 @@ class RandomSearch(CartPole):
 
     def learn(self, reward, done):
         if reward > self.reward_tresh:
-            self.best_parameters.append(self.parameters)
+            self.best_parameters.append((self.parameters, reward))
         if done:
             self.parameters = np.random.random(4) * 2 - 1
