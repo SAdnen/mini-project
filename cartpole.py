@@ -1,7 +1,7 @@
 import numpy as np
-import tensorflow as tf
 from collections import defaultdict
 import math
+
 
 
 class CartPole(object):
@@ -13,32 +13,42 @@ class CartPole(object):
     def __init__(self, action_space):
         self.action_space = action_space
 
-    def act(self, state):
+    def act(self, **kwargs):
         """ Returns random action from action space"""
         return self.action_space.sample()
-    def learn(self):
-        pass
+
+    def learn(self, **kwargs):
+        raise NotImplementedError
 
 
 class RandomSearch(CartPole):
 
-    def __init__(self, reward_tresh=50, parameters=None):
+    def __init__(self, action_space, reward_tresh=50, parameters=None):
+        super().__init__(action_space)
         if parameters is None:
             self.reward_tresh = reward_tresh
-            self.parameters = np.random(4) * 2 - 1
+            self.parameters = np.random.random(4) * 2 - 1
             self.best_parameters = []
         else:
-            assert len(parameters) == 4, "length parameters should be 4"
+            assert len(
+                parameters) == 4, "parameters should be an array of length 4"
             self.parameters = parameters
 
-        def act(self, state):
-            return self.parameters * state
+    def act(self, state):
+        assert len(state) == 4, "state should be an array of leng 4"
+        action = np.dot(self.parameters, state)
 
-        def learn(self, reward, done):
-            if reward > self.reward_tresh:
-                self.best_parameters.append(self.parameters)
-            if done:
-                self.parameters = np.random(4) * 2 - 1
+        if action > 0:
+            return 1
+        else:
+            return 0
+
+    def learn(self, reward, done):
+        if reward >= self.reward_tresh:
+            self.reward_tresh = reward
+            self.best_parameters.append((self.parameters, reward))
+        if done:
+            self.parameters = np.random.random(4) * 2 - 1
 
 class QlearningAgent(CartPole):
 
@@ -78,8 +88,7 @@ class QlearningAgent(CartPole):
         self.state_init(high, low)
 
     def act(self, state):
-
-
+        """Take an action"""
         if np.random.random()<self.epsilon:
             i = np.random.randint(0, self.num_actions)
         else:
@@ -91,13 +100,9 @@ class QlearningAgent(CartPole):
             else:
                 i = np.argmax(vals)
 
-            """print("vals=", vals)
-            print("state=", s1)
-            print("action=", i)
-            print("learning rate", self.get_learning_rate(t))
-            print("explore rate", self.get_explore_rate(t))"""
 
         return i
+
 
     def learn(self, state, action, reward, next_state):
         """Learn with qlearning"""
@@ -112,7 +117,6 @@ class QlearningAgent(CartPole):
         td_target = reward + self.gamma * max_q
         td_delta = td_target - self.Q[(s1, action)]
         self.Q[(s1, action)] += self.alpha * td_delta
-        # print(self.Q)
 
 
 
@@ -135,35 +139,6 @@ class QlearningAgent(CartPole):
         return tuple(bucket_indice)
 
 
-
-
-
-
-    """    def act(self, state):
-        s1 = str(state)
-        vals = [v for ((s, a), v) in self.Q.items() if s == s1]
-        if np.random.random() < self.epsilon:
-            i = np.random.randint(0, len(self.actions))
-        else:
-            if len(vals) <= 0:
-                i = np.random.randint(0, len(self.actions))
-            else:
-                i = np.argmax(vals)
-        return self.actions[i]
-
-    def learn(self, state1, action1, reward, state2, done):
-        s1, a1, s2 = str(state1), str(action1), str(state2)
-        self.Q[(s1, a1)] += 0
-        for action in self.actions:
-            a2 = str(action)
-            self.Q[(s2, a2)] += 0
-
-        vals = [v for ((s, a), v) in self.Q.items() if s == s2]
-        max_q = max(vals)
-
-        td_target = reward + self.gamma * max_q
-        td_delta = td_target - self.Q[(s1, a1)]  # self.Q[(state1Str, action1)]
-        self.Q[(s1, a1)] += self.alpha * td_delta"""
 
 
 
