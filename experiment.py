@@ -1,3 +1,4 @@
+
 import matplotlib.pyplot as plt
 import numpy as np
 from time import sleep
@@ -28,6 +29,7 @@ def plot_graphs(episode_reward, episode_length):
     plt.show()
 
 
+
 class Experiment(object):
 
     def __init__(self, env, agent):
@@ -36,6 +38,7 @@ class Experiment(object):
         self.agent = agent
         self.episode_length = np.array([0])
         self.episode_reward = np.array([0])
+
 
 
     def run(self, max_number_of_episodes=100,
@@ -140,20 +143,15 @@ class Experiment(object):
             t = 0  # used to display accumulated steps for an episode i.e episode length
 
             # repeat for each step of episode, until state is terminal
-            # repeat for each step of episode, until state is terminal
             while not done:
-                # increase step counter - for display
-                t += 1
-
-                # choose action from state
-                action = self.agent.act(state)
-
                 # take action, observe reward and next state
                 next_state, reward, done, _ = self.env.step(action)
 
                 # agent learn
                 self.agent.learn(state, action, reward, next_state)
 
+                # choose action from state using policy derived from Q
+                action = self.agent.act(state)
 
                 # update state & action
                 state = next_state
@@ -171,6 +169,8 @@ class Experiment(object):
                     print("State: %s" % str(state))
                     print("Reward: %f" % reward)
 
+            self.agent.learn(R, done)
+
 
 
             # keep episode length - for display
@@ -187,7 +187,8 @@ class Experiment(object):
 
 
         # if interactive display, show update for the episode
+
+            # if interactive display, show update for the episo
         if interactive:
             self.env.close()
-
         plot_graphs(self.episode_reward, self.episode_length)

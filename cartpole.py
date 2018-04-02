@@ -3,7 +3,6 @@ from collections import defaultdict
 import math
 
 
-
 class CartPole(object):
 
     """
@@ -50,6 +49,8 @@ class RandomSearch(CartPole):
         if done:
             self.parameters = np.random.random(4) * 2 - 1
 
+            
+        
 class QlearningAgent(CartPole):
 
     ## Learning related constants
@@ -137,8 +138,4 @@ class QlearningAgent(CartPole):
                 bucket_index = int(round(scaling * state[i] - offset))
             bucket_indice.append(bucket_index)
         return tuple(bucket_indice)
-
-
-
-
 

@@ -1,9 +1,10 @@
 # ! /usr/bin/env python3
 
+
 from cartpole import CartPole, QlearningAgent
+import cartpole
 from experiment import Experiment
 import gym
-import numpy as np
 
 
 
@@ -21,7 +22,6 @@ def main():
 
     experiment = Experiment(env, agent)
     experiment.run_qlearning(max_number_of_episodes=1000, interactive=interactive, debug=debug)
-
 
 
 if __name__ == '__main__':
