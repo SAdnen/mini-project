@@ -32,7 +32,7 @@ class Experiment(object):
                 t += 1
 
                 # choose action from state
-                action = self.agent.act(state)
+                action = self.agent.act()
 
                 # take action, observe reward and next state
                 next_state, reward, done, _ = self.env.step(action)
@@ -61,7 +61,7 @@ class Experiment(object):
         if interactive:
             self.env.close()
 
-        plot_graphs(self.episode_reward, self.episode_length)
+       utils.plot_graphs(self.episode_reward, self.episode_length)
 
     def run_randomsearch(self, max_number_of_episodes=100, interactive=False,
                          display_frequency=1):
