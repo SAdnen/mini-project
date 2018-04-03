@@ -54,14 +54,11 @@ class Experiment(object):
             # keep episode reward - for display
             self.episode_reward = np.append(self.episode_reward, R)
 
-            # agent learn
-            self.agent.learn()
-
         # if interactive display, show update for the episode
         if interactive:
             self.env.close()
 
-       utils.plot_graphs(self.episode_reward, self.episode_length)
+        utils.plot_graphs(self.episode_reward, self.episode_length)
 
     def run_randomsearch(self, max_number_of_episodes=100, interactive=False,
                          display_frequency=1):
@@ -138,8 +135,6 @@ class Experiment(object):
                     print("Action: %d" % action)
                     print("State: %s" % str(state))
                     print("Reward: %f" % reward)
-
-            self.agent.learn(R, done)
 
             # keep episode length - for display
             self.episode_length = np.append(self.episode_length, t)
