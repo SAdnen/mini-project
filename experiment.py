@@ -37,10 +37,6 @@ class Experiment(object):
                 # take action, observe reward and next state
                 next_state, reward, done, _ = self.env.step(action)
 
-                # state <- next state, action <- next_action
-                state = next_state
-                # action = next_action
-
                 # accumulate reward - for display
                 R += reward
 
