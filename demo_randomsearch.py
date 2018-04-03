@@ -14,7 +14,7 @@ action_space = env.action_space
 agent = RandomSearch(action_space)
 
 experiment = Experiment(env, agent)
-experiment.run_randomsearch(max_number_of_episodes=500, interactive=interactive, display_frequency=1)
+experiment.run_randomsearch(max_number_of_episodes=50, interactive=interactive, display_frequency=1)
 
 
 
