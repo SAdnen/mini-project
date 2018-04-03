@@ -1,4 +1,4 @@
-from utils import utils
+from utils.utils import plot_graphs
 import numpy as np
 from time import sleep
 
@@ -54,7 +54,7 @@ class Experiment(object):
         if interactive:
             self.env.close()
 
-        utils.plot_graphs(self.episode_reward, self.episode_length)
+        plot_graphs(self.episode_reward, self.episode_length)
 
     def run_randomsearch(self, max_number_of_episodes=100, interactive=False,
                          display_frequency=1):
@@ -109,7 +109,8 @@ class Experiment(object):
             while not done:
                 # choose action from state using policy derived from Q
                 action = self.agent.act(state)
-
+                # increment the lenght of the episode
+                t += 1
                 # take action, observe reward and next state
                 next_state, reward, done, _ = self.env.step(action)
 
@@ -145,7 +146,6 @@ class Experiment(object):
             self.agent.alpha = self.agent.get_learning_rate(episode_number)
 
         # if interactive display, show update for the episode
-            # if interactive display, show update for the episo
         if interactive:
             self.env.close()
-        utils.plot_graphs(self.episode_reward, self.episode_length)
+        plot_graphs(self.episode_reward, self.episode_length)
