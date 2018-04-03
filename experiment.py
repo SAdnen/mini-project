@@ -54,9 +54,6 @@ class Experiment(object):
             # keep episode reward - for display
             self.episode_reward = np.append(self.episode_reward, R)
 
-            # agent learn
-            self.agent.learn()
-
         # if interactive display, show update for the episode
         if interactive:
             self.env.close()
@@ -138,8 +135,6 @@ class Experiment(object):
                     print("Action: %d" % action)
                     print("State: %s" % str(state))
                     print("Reward: %f" % reward)
-
-            self.agent.learn(R, done)
 
             # keep episode length - for display
             self.episode_length = np.append(self.episode_length, t)
