@@ -107,14 +107,14 @@ class Experiment(object):
 
             # repeat for each step of episode, until state is terminal
             while not done:
+                # choose action from state using policy derived from Q
+                action = self.agent.act(state)
+
                 # take action, observe reward and next state
                 next_state, reward, done, _ = self.env.step(action)
 
                 # agent learn
                 self.agent.learn(state, action, reward, next_state)
-
-                # choose action from state using policy derived from Q
-                action = self.agent.act(state)
 
                 # update state & action
                 state = next_state
