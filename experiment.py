@@ -20,7 +20,7 @@ def plot_graphs(episode_reward, episode_length):
 
     plt.figure(2)
     # plt.subplot(212)
-    plt.plot(x_axis, episode_rewards )
+    plt.plot(x_axis, episode_rewards)
     plt.title('Rewards')
     plt.grid(True)
     plt.xlabel("Episode")
@@ -61,7 +61,7 @@ class Experiment(object):
                 t += 1
 
                 # choose action from state
-                action = self.agent.act(state)
+                action = self.agent.act()
 
                 # take action, observe reward and next state
                 next_state, reward, done, _ = self.env.step(action)
@@ -82,9 +82,6 @@ class Experiment(object):
 
             # keep episode reward - for display
             self.episode_reward = np.append(self.episode_reward, R)
-
-            # agent learn
-            self.agent.learn()
 
         # if interactive display, show update for the episode
         if interactive:
@@ -144,14 +141,17 @@ class Experiment(object):
 
             # repeat for each step of episode, until state is terminal
             while not done:
+
+                # choose action from state using policy derived from Q
+                action = self.agent.act(state)
+
                 # take action, observe reward and next state
                 next_state, reward, done, _ = self.env.step(action)
 
                 # agent learn
                 self.agent.learn(state, action, reward, next_state)
 
-                # choose action from state using policy derived from Q
-                action = self.agent.act(state)
+
 
                 # update state & action
                 state = next_state
@@ -168,8 +168,6 @@ class Experiment(object):
                     print("Action: %d" % action)
                     print("State: %s" % str(state))
                     print("Reward: %f" % reward)
-
-            self.agent.learn(R, done)
 
 
 
