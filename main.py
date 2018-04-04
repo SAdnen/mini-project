@@ -21,7 +21,7 @@ def main():
 
 
     experiment = Experiment(env, agent)
-    experiment.run_qlearning(max_number_of_episodes=100, interactive=interactive, debug=debug)
+    experiment.run_qlearning(max_number_of_episodes=500, interactive=interactive, debug=debug)
 
 
 if __name__ == '__main__':
