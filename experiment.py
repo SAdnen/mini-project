@@ -1,5 +1,4 @@
-from utils import utils
-from utils.utils import Utils
+from utils.utils import plot_graphs
 import numpy as np
 
 
@@ -18,12 +17,12 @@ class Experiment(object):
         # repeat for each episode
         for episode_number in range(max_number_of_episodes):
 
-            # initialize state
-            state = self.env.reset()
+            # no need to initialize state
+            self.env.reset()
 
             done = False  # used to indicate terminal state
             R = 0  # used to display accumulated rewards for an episode
-            t = 0  # used to display accumulated steps for an episode i.e episode length
+            t = 0  # used to display accumulated steps for an episode
 
             # repeat for each step of episode, until state is terminal
             while not done:
@@ -54,7 +53,7 @@ class Experiment(object):
         if interactive:
             self.env.close()
 
-        Utils.plot_graphs(self.episode_reward, self.episode_length)
+        plot_graphs(self.episode_reward, self.episode_length)
 
     def run_randomsearch(self, max_number_of_episodes=100, interactive=False,
                          display_frequency=1):
@@ -103,7 +102,7 @@ class Experiment(object):
 
             done = False  # used to indicate terminal state
             R = 0  # used to display accumulated rewards for an episode
-            t = 0  # used to display accumulated steps for an episode i.e episode length
+            t = 0  # used to display accumulated steps for an episode
 
             # repeat for each step of episode, until state is terminal
             while not done:
@@ -150,5 +149,4 @@ class Experiment(object):
         if interactive:
             self.env.close()
 
-        Utils.plot_graphs(self.episode_reward, self.episode_length)
-
+        plot_graphs(self.episode_reward, self.episode_length)
