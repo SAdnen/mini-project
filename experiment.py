@@ -1,5 +1,6 @@
 from utils import utils
 from utils.utils import Utils
+import numpy as np
 
 
 class Experiment(object):
@@ -53,7 +54,7 @@ class Experiment(object):
         if interactive:
             self.env.close()
 
-        plot_graphs(self.episode_reward, self.episode_length)
+        Utils.plot_graphs(self.episode_reward, self.episode_length)
 
     def run_randomsearch(self, max_number_of_episodes=100, interactive=False,
                          display_frequency=1):
@@ -106,7 +107,7 @@ class Experiment(object):
 
             # repeat for each step of episode, until state is terminal
             while not done:
-                t+=1
+
                 # choose action from state using policy derived from Q
                 action = self.agent.act(state)
                 # increment the lenght of the episode
