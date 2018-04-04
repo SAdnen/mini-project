@@ -6,14 +6,13 @@ class Utils(object):
     def __init__(self):
         pass
 
-    def plot_graphs(self, episode_reward, episode_length):
-        self.episode_lengths = episode_length
-        self.episode_rewards = episode_reward
-        x_axis = range(len(self.episode_lengths))
+    def plot_graphs(episode_reward, episode_length):
+
+        x_axis = range(len(episode_length))
 
         plt.figure(1)
         # plt.subplot(211)
-        plt.plot(x_axis, self.episode_lengths)
+        plt.plot(x_axis, episode_length)
         plt.title('Episode Lenghts')
         plt.grid(True)
         plt.xlabel("Episode")
@@ -21,7 +20,7 @@ class Utils(object):
 
         plt.figure(2)
         # plt.subplot(212)
-        plt.plot(x_axis, self.episode_rewards)
+        plt.plot(x_axis, episode_reward)
         plt.title('Rewards')
         plt.grid(True)
         plt.xlabel("Episode")

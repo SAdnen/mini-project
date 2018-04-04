@@ -1,4 +1,5 @@
 from utils import utils
+from utils.utils import Utils
 import numpy as np
 from time import sleep
 
@@ -107,6 +108,7 @@ class Experiment(object):
 
             # repeat for each step of episode, until state is terminal
             while not done:
+                t+=1
                 # choose action from state using policy derived from Q
                 action = self.agent.act(state)
 
@@ -148,4 +150,4 @@ class Experiment(object):
             # if interactive display, show update for the episo
         if interactive:
             self.env.close()
-        utils.plot_graphs(self.episode_reward, self.episode_length)
+        Utils.plot_graphs(self.episode_reward, self.episode_length)
