@@ -1,7 +1,7 @@
 # ! /usr/bin/env python3
 
 
-from agents.qlearning import QlearningAgent
+from agents.qlearning_agent import QlearningAgent
 from experiment import Experiment
 import gym
 
