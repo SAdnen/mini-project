@@ -32,9 +32,16 @@ class MonteCarlo(BaseAgent):
         return max(MIN_EXPLORE_RATE, min(1.0, 1.0 - math.log10((t + 1) / 500)))
 
     def get_learning_rate(self, t, MIN_LEARNING_RATE=MIN_LEARNING_RATE):
-        return max(MIN_LEARNING_RATE, min(0.9, 1.0 - math.log10((t + 1) / 25)))
+        return max(MIN_LEARNING_RATE, min(0.5, 1.0 - math.log10((t + 1) / 500)))
 
-
+    def discount_rewards(self, r, gamma=0.99):
+        """Take 1D float array of rewards and compute discounted reward """
+        discounted_r = np.zeros_like(r)
+        running_add = 0
+        for t in reversed(range(0, r.size)):
+            running_add = running_add * gamma + r[t]
+            discounted_r[t] = running_add
+        return discounted_r
 
     def act(self, state):
         """Take an action"""
@@ -71,7 +78,10 @@ class MonteCarlo(BaseAgent):
         return tuple(bucket_indice)
 
 
-    def learn(self, states, actions, R):
+
+    def learn(self, states, actions, rewards):
+        discounted_rewards = self.discount_rewards(np.array(rewards))
+        R = np.sum(discounted_rewards)
         for state, action in zip(states,actions):
             s = self.state_to_bucket(state)
             self.N[s] += 1

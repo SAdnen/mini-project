@@ -167,6 +167,9 @@ class Experiment(object):
             # keep action tracking
             actions = []
 
+            # keep track of rewards
+            rewards = []
+
             done = False  # used to indicate terminal state
             R = 0  # used to display accumulated rewards for an episode
             t = 0  # used to display accumulated steps for an episode
@@ -196,6 +199,7 @@ class Experiment(object):
 
                 # accumulate reward - for display
                 R += reward
+                rewards.append(reward)
 
                 # if interactive display, show update for each step
                 if interactive:
@@ -211,7 +215,7 @@ class Experiment(object):
                     print("Reward: %f" % reward)
 
             # learn
-            self.agent.learn(states, actions, R)
+            self.agent.learn(states, actions, rewards)
 
             # keep episode length - for display
             self.episode_length = np.append(self.episode_length, t)

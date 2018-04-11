@@ -16,4 +16,4 @@ low=env.observation_space.low
 agent = MonteCarlo(action_space, high, low)
 
 experiment = Experiment(env, agent)
-experiment.run_montecarlo(max_number_of_episodes=5000, interactive=interactive, debug=debug)
+experiment.run_montecarlo(max_number_of_episodes=1000, interactive=interactive, debug=debug)
